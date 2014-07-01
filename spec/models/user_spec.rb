@@ -15,10 +15,18 @@ describe User do
   it { should respond_to(:password_digest) }
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
+  it { should respond_to(:remember_token) }
   it { should respond_to(:authenticate) }
 
   # test that the object is minimally valid
   it { should be_valid }
+
+  # test to make sure remember_token is assigned to user when saved
+
+  describe "remember token" do
+    before { @user.save }
+    its(:remember_token) { should_not be_blank }
+  end
 
   # basic password check for length  
   describe "with a password that's too short" do
