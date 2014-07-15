@@ -17,7 +17,7 @@ describe "Static pages" do
     it_should_behave_like "all static pages"
     it { should_not have_title('| Home') }
 
-    describe "for signed in users" do
+    describe "for signed in users with zero or more than one microposts" do
       let(:user) { FactoryGirl.create(:user) }
       before do
         FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
@@ -30,6 +30,23 @@ describe "Static pages" do
         user.feed.each do |item|
           expect(page).to have_selector("li##{item.id}", text: item.content)
         end
+      end
+
+      it "shoud show the number of microposts in the sidebar" do
+        expect(page).to have_content("#{user.microposts.count} microposts")
+      end
+    end
+
+    describe "for signed in users with one micropost" do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+        sign_in user
+        visit root_path
+      end
+
+      it "should show the user has one micropost in the sidebar" do
+        expect(page).to have_content("1 micropost")
       end
     end
   end
